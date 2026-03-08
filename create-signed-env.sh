@@ -4,10 +4,10 @@
 DEFAULT_COUNTRY="US"
 DEFAULT_STATE="California"
 DEFAULT_LOCALITY="Mountain View"
-DEFAULT_ORGANIZATION="crDroid"
-DEFAULT_ORG_UNIT="crDroid"
-DEFAULT_COMMON_NAME="crDroid"
-DEFAULT_EMAIL="contact@crdroid.net"
+DEFAULT_ORGANIZATION="AfterlifeOS"
+DEFAULT_ORG_UNIT="AfterlifeOS"
+DEFAULT_COMMON_NAME="AfterlifeOS"
+DEFAULT_EMAIL="android@android.com"
 
 # Prompt the user for each part of the subject line with defaults
 read -p "Enter country code [${DEFAULT_COUNTRY}] (C): " country
@@ -83,18 +83,18 @@ done
 
 ## Create vendor for keys
 rm ~/.android-certs/make_key
-rm -rf vendor/lineage-priv
-mkdir -p vendor/lineage-priv
-mv ~/.android-certs vendor/lineage-priv/keys
+rm -rf vendor/afterlife-priv
+mkdir -p vendor/afterlife-priv
+mv ~/.android-certs vendor/afterlife-priv/keys
 
 if [ -f keys.mk ]; then
-  cp keys.mk vendor/lineage-priv/keys/keys.mk
+  cp keys.mk vendor/afterlife-priv/keys/keys.mk
 else
   echo "ERROR: keys.mk not found next to create-signed-env.sh"
   exit 1
 fi
 
-cat <<EOF > vendor/lineage-priv/keys/BUILD.bazel
+cat <<EOF > vendor/afterlife-priv/keys/BUILD.bazel
 filegroup(
     name = "android_certificate_directory",
     srcs = glob([
@@ -105,7 +105,7 @@ filegroup(
 )
 EOF
 
-# Build Android.bp from whatever override certs exist in vendor/lineage-priv/keys
+# Build Android.bp from whatever override certs exist in vendor/afterlife-priv/keys
 {
   echo "// Auto-generated. Do not edit."
   echo ""
@@ -120,15 +120,15 @@ android_app_certificate {
 
 EOF
   done < <(
-    find vendor/lineage-priv/keys -maxdepth 1 -type f -name "*.override.pk8" -printf "%f\n" \
+    find vendor/afterlife-priv/keys -maxdepth 1 -type f -name "*.override.pk8" -printf "%f\n" \
       | sed 's/\.override\.pk8$//' \
       | sort -u
   )
-} > vendor/lineage-priv/keys/Android.bp
+} > vendor/afterlife-priv/keys/Android.bp
 
 echo ""
 echo "✓ Done! Now build as usual."
-echo "✓ If builds aren't being signed, add '-include vendor/lineage-priv/keys/keys.mk' to your device mk file"
+echo "✓ If builds aren't being signed, add '-include vendor/afterlife-priv/keys/keys.mk' to your device mk file"
 echo ""
-echo "⚠ IMPORTANT: Make copies of your vendor/lineage-priv folder as it contains your keys!"
+echo "⚠ IMPORTANT: Make copies of your vendor/afterlife-priv folder as it contains your keys!"
 sleep 3
